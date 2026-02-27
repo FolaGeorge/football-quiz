@@ -154,7 +154,6 @@ function setupQuiz(selectedClub) {
     if (localStorage.getItem('quiz_completed') === 'true') {
         alert("🚨 VAR CHECK: You've already taken this quiz! One entry per person.");
         return;
-    }
 
     playerName = document.getElementById('username').value.trim();
     

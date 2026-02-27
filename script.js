@@ -150,10 +150,16 @@ const quizData = {
 // 3. LOGIC FUNCTIONS
 
 function setupQuiz(selectedClub) {
+    // Check if they have already finished the quiz before
+    if (localStorage.getItem('quiz_completed') === 'true') {
+        alert("🚨 VAR CHECK: You've already taken this quiz! One entry per person.");
+        return;
+    }
+
     playerName = document.getElementById('username').value.trim();
     
     if (!playerName) {
-        alert("Enter a nickname first, boss!");
+        alert("Enter a nickname first, bossu!");
         return;
     }
 

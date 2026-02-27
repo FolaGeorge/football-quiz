@@ -178,14 +178,41 @@ function setupQuiz(selectedClub) {
     startQuiz();
 }
 
-// 2. THE START LOGIC
 function startQuiz() {
     quizActive = true;
     document.getElementById('start-screen').classList.add('hidden');
     document.getElementById('quiz-screen').classList.remove('hidden');
     
+    console.log("Quiz Started for:", playerName);
+    console.log("Questions Loaded:", currentQuizQuestions.length);
+
     startTimer();
-    showQuestion();
+    showQuestion(); // This MUST be called here to show the first question
+}
+
+function showQuestion() {
+    if (currentQuestionIndex >= currentQuizQuestions.length) {
+        endQuiz();
+        return;
+    }
+
+    let question = currentQuizQuestions[currentQuestionIndex];
+    
+    // Update the UI
+    document.getElementById('progress').innerText = `Question ${currentQuestionIndex + 1}/25`;
+    document.getElementById('question-text').innerText = question.q;
+    
+    const btnGrid = document.getElementById('answer-buttons');
+    btnGrid.innerHTML = ''; // Wipe old buttons
+
+    // Create a button for each option
+    question.options.forEach(option => {
+        const button = document.createElement('button');
+        button.innerText = option;
+        button.classList.add('ans-btn');
+        button.onclick = () => checkAnswer(option, question.a);
+        btnGrid.appendChild(button);
+    });
 }
 
 // 3. THE TIMER LOGIC

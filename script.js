@@ -43,7 +43,6 @@ const quizData = {
         { q: "Interim stadium 2020-21?", options: ["Bernabeu", "Alfredo Di Stefano", "Metropolitano", "Mestalla"], a: "Alfredo Di Stefano" },
         { q: "92:48 goalscorer in 2014?", options: ["Ronaldo", "Ramos", "Modric", "Bale"], a: "Ramos" },
         { q: "Who did Madrid sign from Monaco in 2022?", options: ["Tchouameni", "Camavinga", "Mbappe", "Mendy"], a: "Tchouameni" },
-        { q: "Won the 2024 Ballon d'Or as a Madrid player?", options: ["Vinicius Jr", "Bellingham", "Rodri", "Mbappe"], a: "Vinicius Jr" }, // Note: Rodri won IRL, but often debated in banter
         { q: "Current number 7?", options: ["Vinicius Jr", "Mbappe", "Hazard", "Ronaldo"], a: "Vinicius Jr" },
         { q: "Goalscorer in 2017 UCL Final vs Juve?", options: ["Ronaldo", "Casemiro", "Asensio", "All of them"], a: "All of them" },
         { q: "Signed from Chelsea in 2019?", options: ["Hazard", "Courtois", "Rudiger", "Kovacic"], a: "Hazard" },

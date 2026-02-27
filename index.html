@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ball Knowers Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+    <div id="start-screen" class="container">
+        <h1>⚽ The Ball Knowers Quiz</h1>
+        <p>25 Questions. 7 Minutes. No Google. No Mercy.</p>
+        
+        <input type="text" id="username" placeholder="Enter your Nickname..." maxlength="15">
+        
+        <h3>Select Your Club</h3>
+        <div class="badge-grid">
+            <div class="badge-item" onclick="setupQuiz('Arsenal')">
+                <img src="badges/arsenal.png" alt="Arsenal">
+                <span>Arsenal</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('Real Madrid')">
+                <img src="badges/madrid.png" alt="Real Madrid">
+                <span>Real Madrid</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('Chelsea')">
+                <img src="badges/chelsea.png" alt="Chelsea">
+                <span>Chelsea</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('Manchester United')">
+                <img src="badges/united.png" alt="Man Utd">
+                <span>Man Utd</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('Manchester City')">
+                <img src="badges/city.png" alt="Man City">
+                <span>Man City</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('Liverpool')">
+                <img src="badges/liverpool.png" alt="Liverpool">
+                <span>Liverpool</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('Barcelona')">
+                <img src="badges/barca.png" alt="Barcelona">
+                <span>Barca</span>
+            </div>
+            <div class="badge-item" onclick="setupQuiz('General')">
+                <img src="badges/other.png" alt="Other">
+                <span>Other</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="container hidden">
+        <div class="quiz-header">
+            <div id="timer-display">07:00</div>
+            <div id="progress">Question 1/25</div>
+        </div>
+        <div id="question-container">
+            <h2 id="question-text"></h2>
+            <div id="answer-buttons" class="btn-grid"></div>
+        </div>
+    </div>
+
+    <div id="goal-overlay" class="overlay hidden">GOAL! ⚽🔥</div>
+    <div id="redcard-overlay" class="overlay hidden">🟥 RED CARD!</div>
+
+    <script src="script.js"></script>
+</body>
+</html>

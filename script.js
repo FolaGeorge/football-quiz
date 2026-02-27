@@ -150,11 +150,6 @@ const quizData = {
 // 3. LOGIC FUNCTIONS
 
 function setupQuiz(selectedClub) {
-    // Check if they have already finished the quiz before
-    if (localStorage.getItem('quiz_completed') === 'true') {
-        alert("🚨 VAR CHECK: You've already taken this quiz! One entry per person.");
-        return;
-
     playerName = document.getElementById('username').value.trim();
     
     if (!playerName) {
@@ -309,9 +304,5 @@ async function endQuiz() {
             </a>
             <button onclick="location.reload()" class="ans-btn" style="width: 100%;">Rematch?</button>
         </div>
-        
-        <div style="overflow:hidden; border-radius:10px; border:1px solid #333;">
-    <iframe src="YOUR_GOOGLE_SHEET_PUBLISHED_URL_HERE" style="width:100%; height:300px; border:none;"></iframe>
-</div>
     `;
 }

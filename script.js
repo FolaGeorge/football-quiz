@@ -288,7 +288,7 @@ async function endQuiz() {
         <div class="container">
             <h1>FT: Quiz Over!</h1>
             <p style="font-size: 2.5rem; color: #58a6ff;">${score}/100</p>
-            <p>${score >= 80 ? "Certified Ball Knower ✅" : "Twitter Tactician 🤡"}</p>
+            <p>${score >= 80 ? "Certified Ball Knower ✅" : "Otu Oshi!! 🤡"}</p>
             
             <div id="leaderboard-display" style="margin: 20px 0; text-align: left; background: #0d1117; padding: 15px; border-radius: 8px;">
                 <h3 style="text-align: center; border-bottom: 1px solid #333;">Live Leaderboard</h3>

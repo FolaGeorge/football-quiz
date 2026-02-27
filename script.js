@@ -1,7 +1,13 @@
+// 1. GLOBAL VARIABLES (Declared only once)
 let currentQuizQuestions = [];
 let currentQuestionIndex = 0;
 let score = 0;
+let timer;
+let timeLeft = 420; // 7 minutes
 let quizActive = false;
+let playerName = "";
+
+// 2. THE MASTER DATA (Keeping all your verified questions)
 const quizData = {
     "Arsenal": [
         { q: "Who scored the winning goal in the 2014 FA Cup Final vs Hull City?", options: ["Giroud", "Ramsey", "Cazorla", "Koscielny"], a: "Ramsey" },
@@ -140,15 +146,9 @@ const quizData = {
         { q: "Which team plays at the 'Yellow Wall' stadium?", options: ["Bayern", "Dortmund", "Villarreal", "Arsenal"], a: "Dortmund" }
     ]
 };
-let currentQuizQuestions = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let timer;
-let timeLeft = 420; // 7 minutes in seconds
-let quizActive = false;
-let playerName = "";
 
-// 1. THE MIXER FUNCTION
+// 3. LOGIC FUNCTIONS
+
 function setupQuiz(selectedClub) {
     playerName = document.getElementById('username').value.trim();
     
@@ -157,26 +157,22 @@ function setupQuiz(selectedClub) {
         return;
     }
 
-    // Get the 10 club-specific questions
-    // If club not found (or "Other" picked), start with an empty array
+    // Resetting state for a fresh start
+    currentQuestionIndex = 0;
+    score = 0;
+    timeLeft = 420;
+
     let clubPool = quizData[selectedClub] || [];
-    
-    // Get the General pool
     let generalPool = [...quizData["General"]];
 
-    // Shuffle the General pool and pick 15
     let shuffledGeneral = generalPool.sort(() => 0.5 - Math.random());
     let selectedGeneral = shuffledGeneral.slice(0, 15);
 
-    // If "Other" was picked, they need 25 general questions total
     if (clubPool.length === 0) {
         selectedGeneral = shuffledGeneral.slice(0, 25);
     }
 
-    // Combine them (10 Club + 15 General = 25 total)
     currentQuizQuestions = [...clubPool, ...selectedGeneral];
-
-    // Final shuffle so the club questions aren't all at the start
     currentQuizQuestions.sort(() => 0.5 - Math.random());
 
     startQuiz();
@@ -187,11 +183,8 @@ function startQuiz() {
     document.getElementById('start-screen').classList.add('hidden');
     document.getElementById('quiz-screen').classList.remove('hidden');
     
-    console.log("Quiz Started for:", playerName);
-    console.log("Questions Loaded:", currentQuizQuestions.length);
-
     startTimer();
-    showQuestion(); // This MUST be called here to show the first question
+    showQuestion(); 
 }
 
 function showQuestion() {
@@ -202,55 +195,11 @@ function showQuestion() {
 
     let question = currentQuizQuestions[currentQuestionIndex];
     
-    // Update the UI
     document.getElementById('progress').innerText = `Question ${currentQuestionIndex + 1}/25`;
     document.getElementById('question-text').innerText = question.q;
     
     const btnGrid = document.getElementById('answer-buttons');
-    btnGrid.innerHTML = ''; // Wipe old buttons
-
-    // Create a button for each option
-    question.options.forEach(option => {
-        const button = document.createElement('button');
-        button.innerText = option;
-        button.classList.add('ans-btn');
-        button.onclick = () => checkAnswer(option, question.a);
-        btnGrid.appendChild(button);
-    });
-}
-
-// 3. THE TIMER LOGIC
-function startTimer() {
-    timer = setInterval(() => {
-        timeLeft--;
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        document.getElementById('timer-display').innerText = 
-            `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            endQuiz();
-        }
-    }, 1000);
-}
-
-// 4. THE TAB-SWITCH PENALTY (ANTI-CHEAT)
-document.addEventListener("visibilitychange", () => {
-    if (document.hidden && quizActive) {
-        score -= 4; // Penalty of one full question
-        alert("🚨 RED CARD! Tab switching detected. -4 points penalty.");
-        // Optional: play the whistle sound here too
-        new Audio('whistle.mp3').play();
-    }
-});
-function showQuestion() {
-    let question = currentQuizQuestions[currentQuestionIndex];
-    document.getElementById('progress').innerText = `Question ${currentQuestionIndex + 1}/25`;
-    document.getElementById('question-text').innerText = question.q;
-    
-    const btnGrid = document.getElementById('answer-buttons');
-    btnGrid.innerHTML = ''; // Clear old buttons
+    btnGrid.innerHTML = ''; 
 
     question.options.forEach(option => {
         const button = document.createElement('button');
@@ -265,19 +214,42 @@ function checkAnswer(selected, correct) {
     if (selected === correct) {
         score += 4;
         triggerOverlay('goal-overlay');
-        // Optional: play goal sound here
     } else {
         triggerOverlay('redcard-overlay');
-        // Optional: play whistle sound here
     }
 
     currentQuestionIndex++;
     if (currentQuestionIndex < 25) {
-        setTimeout(showQuestion, 1000); // Wait 1 second before next question
+        setTimeout(showQuestion, 1000); 
     } else {
         setTimeout(endQuiz, 1000);
     }
 }
+
+function startTimer() {
+    // Clear any existing timer before starting a new one
+    if (timer) clearInterval(timer);
+    
+    timer = setInterval(() => {
+        timeLeft--;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById('timer-display').innerText = 
+            `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            endQuiz();
+        }
+    }, 1000);
+}
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden && quizActive) {
+        score -= 4; 
+        alert("🚨 RED CARD! Tab switching detected. -4 points penalty.");
+    }
+});
 
 function triggerOverlay(id) {
     const el = document.getElementById(id);
@@ -292,6 +264,6 @@ function triggerOverlay(id) {
 function endQuiz() {
     quizActive = false;
     clearInterval(timer);
-    alert(`Quiz Over, ${playerName}! Your score: ${score}/100`);
-    // Later we will add the Leaderboard submission here
+    alert(`Quiz Over, ${playerName}! Your final score: ${score}/100`);
+    location.reload(); // Returns them to the start screen after the alert
 }

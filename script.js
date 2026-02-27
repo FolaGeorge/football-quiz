@@ -261,10 +261,6 @@ function triggerOverlay(id) {
     }, 800);
 }
 
-function endQuiz() {
-    localStorage.setItem('quiz_completed', 'true'); // Lock them out for the future
-    quizActive = false;
-    
 const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbwFtnqudAHebzN-T-JaP_2Hd92jefbZOH1Cb4yHk2avLYya4mo3EKWHFHnI2dHlxq0l/exec"; // PASTE YOUR URL HERE
 
 async function endQuiz() {

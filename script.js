@@ -1,4 +1,4 @@
-// 1. GLOBAL VARIABLES (Declared only once)
+// 1. GLOBAL VARIABLES
 let currentQuizQuestions = [];
 let currentQuestionIndex = 0;
 let score = 0;
@@ -7,7 +7,11 @@ let timeLeft = 420; // 7 minutes
 let quizActive = false;
 let playerName = "";
 
-// 2. THE MASTER DATA (Keeping all your verified questions)
+// 2. PRELOAD AUDIO (Crucial: This fixes the crash)
+const goalSound = new Audio('sounds/goal.mp3');
+const whistleSound = new Audio('sounds/whistle.mp3');
+
+// 3. THE MASTER DATA
 const quizData = {
     "Arsenal": [
         { q: "Who scored the winning goal in the 2014 FA Cup Final?", options: ["Giroud", "Ramsey", "Cazorla", "Koscielny"], a: "Ramsey" },
@@ -216,7 +220,7 @@ const quizData = {
     ]
 };
 
-// 3. LOGIC FUNCTIONS
+// 4. THE FUNCTIONS
 
 function setupQuiz(selectedClub) {
     playerName = document.getElementById('username').value.trim();
@@ -226,25 +230,28 @@ function setupQuiz(selectedClub) {
         return;
     }
 
-    // 1. Get ALL 20 club-specific questions
+    // Reset State
+    currentQuestionIndex = 0;
+    score = 0;
+    timeLeft = 420;
+
+    // Get 20 club questions
     let clubPool = quizData[selectedClub] || [];
     
-    // 2. Get the General pool
+    // Get 20 random general questions
     let generalPool = [...quizData["General"]];
-
-    // 3. Shuffle General pool and pick exactly 20
     let shuffledGeneral = generalPool.sort(() => 0.5 - Math.random());
     let selectedGeneral = shuffledGeneral.slice(0, 20);
 
-    // 4. If "Other" (General Only) is picked, they need 40 general questions total
+    // If "Other" (General Only) picked, need 40 general questions
     if (clubPool.length === 0) {
         selectedGeneral = shuffledGeneral.slice(0, 40);
     }
 
-    // 5. Combine (20 Club + 20 General = 40 total)
+    // Combine 20 + 20
     currentQuizQuestions = [...clubPool, ...selectedGeneral];
 
-    // 6. Final shuffle
+    // Final Shuffle
     currentQuizQuestions.sort(() => 0.5 - Math.random());
 
     startQuiz();
@@ -284,7 +291,7 @@ function showQuestion() {
 
 function checkAnswer(selected, correct) {
     if (selected === correct) {
-        score += 2.5; // Changed from 4 to 2.5
+        score += 2.5; 
         goalSound.currentTime = 0;
         goalSound.play();
         triggerOverlay('goal-overlay');
@@ -295,16 +302,18 @@ function checkAnswer(selected, correct) {
     }
 
     currentQuestionIndex++;
-    // Update check to 40 questions
-    if (currentQuestionIndex < 40) { 
-        setTimeout(showQuestion, 1000); 
-    } else {
-        setTimeout(endQuiz, 1000);
-    }
+
+    // Small delay before moving to next question so animation can play
+    setTimeout(() => {
+        if (currentQuestionIndex < currentQuizQuestions.length) { 
+            showQuestion(); 
+        } else {
+            endQuiz();
+        }
+    }, 1000);
 }
 
 function startTimer() {
-    // Clear any existing timer before starting a new one
     if (timer) clearInterval(timer);
     
     timer = setInterval(() => {
@@ -324,21 +333,24 @@ function startTimer() {
 document.addEventListener("visibilitychange", () => {
     if (document.hidden && quizActive) {
         score -= 1.5; 
-        alert("🚨 RED CARD! Tab switching detected. -1.5 points penalty.");
+        whistleSound.play();
+        alert("🚨 YELLOW CARD! Tab switching detected. -1.5 points penalty.");
     }
 });
 
 function triggerOverlay(id) {
     const el = document.getElementById(id);
-    el.classList.remove('hidden');
+    el.classList.remove('hidden', 'show'); // Reset
+    void el.offsetWidth; // Trigger reflow to restart animation
     el.classList.add('show');
+    
     setTimeout(() => {
-        el.classList.remove('show');
         el.classList.add('hidden');
+        el.classList.remove('show');
     }, 800);
 }
 
-const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbwFtnqudAHebzN-T-JaP_2Hd92jefbZOH1Cb4yHk2avLYya4mo3EKWHFHnI2dHlxq0l/exec"; // PASTE YOUR URL HERE
+const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbwFtnqudAHebzN-T-JaP_2Hd92jefbZOH1Cb4yHk2avLYya4mo3EKWHFHnI2dHlxq0l/exec"; 
 
 async function endQuiz() {
     quizActive = false;
@@ -348,7 +360,7 @@ async function endQuiz() {
     try {
         await fetch(LEADERBOARD_URL, {
             method: 'POST',
-            mode: 'no-cors', // Standard for Google Script Web Apps
+            mode: 'no-cors', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: playerName, score: score })
         });

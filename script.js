@@ -261,27 +261,44 @@ function triggerOverlay(id) {
     }, 800);
 }
 
-function endQuiz() {
+const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbwFtnqudAHebzN-T-JaP_2Hd92jefbZOH1Cb4yHk2avLYya4mo3EKWHFHnI2dHlxq0l/exec"; // PASTE YOUR URL HERE
+
+async function endQuiz() {
     quizActive = false;
     clearInterval(timer);
-    
-    // Create the message
-    let message = `I just scored ${score}/100 on the Banter FC Quiz! ⚽🔥 Can you beat me? Take the test here: ${window.location.href}`;
+
+    // 1. Send Score to Google Sheets
+    try {
+        await fetch(LEADERBOARD_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Standard for Google Script Web Apps
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: playerName, score: score })
+        });
+    } catch (err) {
+        console.error("Leaderboard save failed", err);
+    }
+
+    // 2. Display Final Screen
+    let message = `I just scored ${score}/100 on the Football Banter Quiz! ⚽ Can you beat me?`;
     let whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
-    // Update the UI to show the final score and a share button
     const quizScreen = document.getElementById('quiz-screen');
     quizScreen.innerHTML = `
         <div class="container">
-            <h1>Quiz Finished!</h1>
-            <p style="font-size: 2rem;">Total Score: ${score}/100</p>
-            <p>Ball Knowledge Status: ${score >= 80 ? "Certified Baller ✅" : "Otu 🤡"}</p>
-            <br>
-            <a href="${whatsappURL}" target="_blank" class="ans-btn" style="text-decoration: none; background: #25D366; display: inline-block;">
-                Share to WhatsApp Group 📱
+            <h1>FT: Quiz Over!</h1>
+            <p style="font-size: 2.5rem; color: #58a6ff;">${score}/100</p>
+            <p>${score >= 80 ? "Certified Ball Knower ✅" : "Twitter Tactician 🤡"}</p>
+            
+            <div id="leaderboard-display" style="margin: 20px 0; text-align: left; background: #0d1117; padding: 15px; border-radius: 8px;">
+                <h3 style="text-align: center; border-bottom: 1px solid #333;">Live Leaderboard</h3>
+                <p style="text-align: center; font-size: 0.8rem;">(Check the WhatsApp group for the full table!)</p>
+            </div>
+
+            <a href="${whatsappURL}" target="_blank" class="ans-btn" style="text-decoration: none; background: #25D366; display: block; margin-bottom: 10px;">
+                Share to WhatsApp 📱
             </a>
-            <br><br>
-            <button onclick="location.reload()" class="ans-btn">Try Again</button>
+            <button onclick="location.reload()" class="ans-btn" style="width: 100%;">Rematch?</button>
         </div>
     `;
 }

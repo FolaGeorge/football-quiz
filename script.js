@@ -264,6 +264,24 @@ function triggerOverlay(id) {
 function endQuiz() {
     quizActive = false;
     clearInterval(timer);
-    alert(`Quiz Over, ${playerName}! Your final score: ${score}/100`);
-    location.reload(); // Returns them to the start screen after the alert
+    
+    // Create the message
+    let message = `I just scored ${score}/100 on the Banter FC Quiz! ⚽🔥 Can you beat me? Take the test here: ${window.location.href}`;
+    let whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+    // Update the UI to show the final score and a share button
+    const quizScreen = document.getElementById('quiz-screen');
+    quizScreen.innerHTML = `
+        <div class="container">
+            <h1>Quiz Finished!</h1>
+            <p style="font-size: 2rem;">Total Score: ${score}/100</p>
+            <p>Ball Knowledge Status: ${score >= 80 ? "Certified Baller ✅" : "Otu 🤡"}</p>
+            <br>
+            <a href="${whatsappURL}" target="_blank" class="ans-btn" style="text-decoration: none; background: #25D366; display: inline-block;">
+                Share to WhatsApp Group 📱
+            </a>
+            <br><br>
+            <button onclick="location.reload()" class="ans-btn">Try Again</button>
+        </div>
+    `;
 }

@@ -136,3 +136,80 @@ const quizData = {
         { q: "Which team plays at the 'Yellow Wall' stadium?", options: ["Bayern", "Dortmund", "Villarreal", "Arsenal"], a: "Dortmund" }
     ]
 };
+let currentQuizQuestions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let timer;
+let timeLeft = 420; // 7 minutes in seconds
+let quizActive = false;
+let playerName = "";
+
+// 1. THE MIXER FUNCTION
+function setupQuiz(selectedClub) {
+    playerName = document.getElementById('username').value.trim();
+    
+    if (!playerName) {
+        alert("Enter a nickname first, boss!");
+        return;
+    }
+
+    // Get the 10 club-specific questions
+    // If club not found (or "Other" picked), start with an empty array
+    let clubPool = quizData[selectedClub] || [];
+    
+    // Get the General pool
+    let generalPool = [...quizData["General"]];
+
+    // Shuffle the General pool and pick 15
+    let shuffledGeneral = generalPool.sort(() => 0.5 - Math.random());
+    let selectedGeneral = shuffledGeneral.slice(0, 15);
+
+    // If "Other" was picked, they need 25 general questions total
+    if (clubPool.length === 0) {
+        selectedGeneral = shuffledGeneral.slice(0, 25);
+    }
+
+    // Combine them (10 Club + 15 General = 25 total)
+    currentQuizQuestions = [...clubPool, ...selectedGeneral];
+
+    // Final shuffle so the club questions aren't all at the start
+    currentQuizQuestions.sort(() => 0.5 - Math.random());
+
+    startQuiz();
+}
+
+// 2. THE START LOGIC
+function startQuiz() {
+    quizActive = true;
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    
+    startTimer();
+    showQuestion();
+}
+
+// 3. THE TIMER LOGIC
+function startTimer() {
+    timer = setInterval(() => {
+        timeLeft--;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById('timer-display').innerText = 
+            `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            endQuiz();
+        }
+    }, 1000);
+}
+
+// 4. THE TAB-SWITCH PENALTY (ANTI-CHEAT)
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden && quizActive) {
+        score -= 4; // Penalty of one full question
+        alert("🚨 RED CARD! Tab switching detected. -4 points penalty.");
+        // Optional: play the whistle sound here too
+        new Audio('whistle.mp3').play();
+    }
+});

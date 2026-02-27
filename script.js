@@ -213,3 +213,54 @@ document.addEventListener("visibilitychange", () => {
         new Audio('whistle.mp3').play();
     }
 });
+function showQuestion() {
+    let question = currentQuizQuestions[currentQuestionIndex];
+    document.getElementById('progress').innerText = `Question ${currentQuestionIndex + 1}/25`;
+    document.getElementById('question-text').innerText = question.q;
+    
+    const btnGrid = document.getElementById('answer-buttons');
+    btnGrid.innerHTML = ''; // Clear old buttons
+
+    question.options.forEach(option => {
+        const button = document.createElement('button');
+        button.innerText = option;
+        button.classList.add('ans-btn');
+        button.onclick = () => checkAnswer(option, question.a);
+        btnGrid.appendChild(button);
+    });
+}
+
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        score += 4;
+        triggerOverlay('goal-overlay');
+        // Optional: play goal sound here
+    } else {
+        triggerOverlay('redcard-overlay');
+        // Optional: play whistle sound here
+    }
+
+    currentQuestionIndex++;
+    if (currentQuestionIndex < 25) {
+        setTimeout(showQuestion, 1000); // Wait 1 second before next question
+    } else {
+        setTimeout(endQuiz, 1000);
+    }
+}
+
+function triggerOverlay(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    el.classList.add('show');
+    setTimeout(() => {
+        el.classList.remove('show');
+        el.classList.add('hidden');
+    }, 800);
+}
+
+function endQuiz() {
+    quizActive = false;
+    clearInterval(timer);
+    alert(`Quiz Over, ${playerName}! Your score: ${score}/100`);
+    // Later we will add the Leaderboard submission here
+}

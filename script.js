@@ -280,7 +280,7 @@ async function endQuiz() {
     }
 
     // 2. Display Final Screen
-    let message = `I just scored ${score}/100 on the Football Banter Quiz! ⚽ Can you beat me?`;
+    let message = `I just scored ${score}/100 on the Banter FC Common Entrance! ⚽ Can you beat me?`;
     let whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
     const quizScreen = document.getElementById('quiz-screen');

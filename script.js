@@ -1,3 +1,7 @@
+let currentQuizQuestions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let quizActive = false;
 const quizData = {
     "Arsenal": [
         { q: "Who scored the winning goal in the 2014 FA Cup Final vs Hull City?", options: ["Giroud", "Ramsey", "Cazorla", "Koscielny"], a: "Ramsey" },
